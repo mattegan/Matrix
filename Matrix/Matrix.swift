@@ -1,6 +1,6 @@
 //
 //  Matrix.swift
-//  noglRenderer
+//  Matrix
 //
 //  Created by Matt Egan on 12/13/15.
 //  Copyright © 2015 Matt Egan. All rights reserved.
@@ -60,8 +60,8 @@ class Matrix : CustomStringConvertible {
             let rStart = rows.minElement()!
             let rEnd = rows.maxElement()!
             let cStart = cols.minElement()!
-            let cEnd = rows.maxElement()!
-            assert(rangeInBounds(rStart...rEnd, cStart...cEnd), "Getting [Rows, Cols] Out Of Bounds")
+            let cEnd = cols.maxElement()!
+            assert(rangeInBounds(rStart..<rEnd, cStart..<cEnd), "Getting [Rows, Cols] Out Of Bounds")
             let result = Matrix.zeros(rows.count, cols.count)
             for (placeRow, getRow) in rows.enumerate() {
                 for (placeCol, getCol) in cols.enumerate() {
@@ -78,7 +78,7 @@ class Matrix : CustomStringConvertible {
             assert(rangeInBounds(rStart...rEnd, cStart...cEnd), "Setting [Rows, Cols] Out Of Bounds")
             let singular = fill.elements.count == 1
             if !singular {
-                assert(fill.rangeInBounds(0...(rows.count - 1), 0...(cols.count - 1)), "Supplied Matrix Is Insufficiently Sized")
+                assert(fill.rangeInBounds(0..<(rows.count - 1), 0..<(cols.count - 1)), "Supplied Matrix Is Insufficiently Sized")
             }
             for (getRow, placeRow) in rows.enumerate() {
                 for (getCol, placeCol) in cols.enumerate() {
@@ -101,7 +101,7 @@ class Matrix : CustomStringConvertible {
         }
     }
 
-    //  rows and cols can be indexed by ranges or by integer strides
+    //  rows and cols can be indexed by ranges or by integer strides too
     subscript(rows: Range<Int>, cols: Range<Int>) -> Matrix {
         get {
             return self[[Int](rows), [Int](cols)]
@@ -120,8 +120,17 @@ class Matrix : CustomStringConvertible {
         }
     }
     
-    //  a single row or column can be called out using an integer
+    //  a single row or column can be called out using an integer combined with an array, range or stride
     //  this is more convenient than a single element list, range or stride
+    subscript(row: Int, cols: Array<Int>) -> Matrix {
+        get {
+            return self[[row], cols]
+        }
+        set(fill) {
+            self[[row],  cols] = fill
+        }
+    }
+
     subscript(row: Int, cols: Range<Int>) -> Matrix {
         get {
             return self[[row], [Int](cols)]
@@ -137,6 +146,15 @@ class Matrix : CustomStringConvertible {
         }
         set(fill) {
             self[[row], [Int](cols)] = fill
+        }
+    }
+
+    subscript(rows: Array<Int>, col: Int) -> Matrix {
+        get {
+            return self[rows, [col]]
+        }
+        set(fill) {
+            self[rows, [col]] = fill
         }
     }
     
@@ -159,7 +177,7 @@ class Matrix : CustomStringConvertible {
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // MARK: Initalizers
+    // MARK: Initializers
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     
     init(nr: Int, nc: Int, elements: Array<Double>) {
@@ -190,15 +208,30 @@ class Matrix : CustomStringConvertible {
         let elements = [Double](count: rows * cols, repeatedValue: pad)
         return Matrix.init(nr: rows, nc: cols, elements: elements)
     }
+    
+    //  returns a square prefilled matrix
+    class func prefilled(size: Int, pad: Double) -> Matrix {
+        return Matrix.prefilled(size, size, pad: pad)
+    }
 
     //  returns a rows*cols matrix filled with zeros
     class func zeros(rows: Int, _ cols: Int) -> Matrix {
         return Matrix.prefilled(rows, cols, pad: 0.0)
     }
     
+    //  returns a square zeros matrix
+    class func zeros(size: Int) -> Matrix {
+        return Matrix.zeros(size, size)
+    }
+    
     //  returns a rows*cols matrix filled with ones
     class func ones(rows: Int, _ cols: Int) -> Matrix {
         return Matrix.prefilled(rows, cols, pad: 1.0)
+    }
+    
+    //  returns a square ones matrix
+    class func ones(size: Int) -> Matrix {
+        return Matrix.ones(size, size)
     }
     
     //  returns a fill.count*fill.count matrix with the diagonal elements equal to the elements in
@@ -232,11 +265,92 @@ class Matrix : CustomStringConvertible {
     
     func rangeInBounds(rows: Range<Int>, _ cols: Range<Int>) -> Bool {
         return (indexInBounds(rows.startIndex, cols.startIndex) &&
-            indexInBounds(rows.endIndex - 1, cols.endIndex - 1))
+            indexInBounds(rows.endIndex, cols.endIndex))
     }
     
     class func dimensionsEqual(first: Matrix, _ second: Matrix) -> Bool {
         return (first.nr == second.nr && first.nc == second.nc)
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //  MARK: Operations
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //  apply a function to every element
+    func map(function: (Double) -> Double) -> Matrix {
+        let result = Matrix.zeros(nr, nc)
+        for (index, element) in elements.enumerate() {
+            result.elements[index] = function(element)
+        }
+        return result
+    }
+    
+    //  combine two equally sized matrices into one using a function
+    func combine(matrix: Matrix, operation: (Double, Double) -> Double) -> Matrix {
+        assert(Matrix.dimensionsEqual(self, matrix), "Dimension Mismatch: Dimensions Must Equal")
+        let result = Matrix.zeros(nr, nc)
+        for (index, element) in elements.enumerate() {
+            result.elements[index] = operation(element, matrix.elements[index])
+        }
+        return result
+    }
+    
+    //  element-wise addition, subtraction, multiplication and division
+    func add(matrix: Matrix) -> Matrix {
+        return self.combine(matrix, operation: +)
+    }
+    
+    func subtract(matrix: Matrix) -> Matrix {
+        return self.combine(matrix, operation: -)
+    }
+    
+    func multiplyElements(matrix: Matrix) -> Matrix {
+        return self.combine(matrix, operation: *)
+    }
+    
+    func divideElements(matrix: Matrix) -> Matrix {
+        return self.combine(matrix, operation: /)
+    }
+    
+    //  add, subtract, multiply and divide by a scalar
+    func add(scalar: Double) -> Matrix {
+        return self.map{$0 + scalar}
+    }
+    
+    func subtract(scalar: Double) -> Matrix {
+        return self.map{$0 - scalar}
+    }
+    
+    func multiply(scalar: Double) -> Matrix {
+        return self.map{$0 * scalar}
+    }
+    
+    func divide(scalar: Double) -> Matrix {
+        return self.map{$0 * scalar}
+    }
+    
+    // multiply or divide two matrices
+    func multiply(matrix: Matrix) -> Matrix {
+        assert(nc == matrix.nr, "Multiplication Dimension Mismatch")
+        let result = Matrix.zeros(nr, matrix.nc)
+        for row in result.allRows {
+            for col in result.allCols {
+                let value = self[row, allCols].multiplyElements(matrix[matrix.allRows, col].transpose()).sum
+                result[row, col] = value
+            }
+        }
+        return result
+    }
+    
+    //  get the transpose of the matrix, (rows -> cols, cols -> rows)
+    func transpose() -> Matrix{
+        let result = Matrix.zeros(self.nc, self.nr)
+        for row in self.allRows {
+            for col in self.allCols {
+                result[col, row] = self[row, col]
+            }
+        }
+        return result
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +363,7 @@ class Matrix : CustomStringConvertible {
         }
     }
     
-    //  generates a string with rows separated by newlines, with inteligent column spacing for
+    //  generates a string with rows separated by newlines, with intelligent column spacing for
     //  different precision outputs (rounds to precision)
     func toString(precision: Int = 3) -> String{
         //  determine the column width
@@ -284,21 +398,31 @@ class Matrix : CustomStringConvertible {
 //  MARK: Matrix-Matrix Operators
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//  add two equivilently sized matrices, element by element
+//  add two equivalently sized matrices, element by element
 func + (left: Matrix, right: Matrix) -> Matrix {
-    assert(Matrix.dimensionsEqual(left, right), "Dimension Mismatch: Addition")
-    let result = Matrix.zeros(left.nr, left.nc)
-    for row in left.allRows {
-        for col in left.allCols {
-            result[row, col] = left[row, col] + right[row, col]
-        }
-    }
-    return result
+    return left.add(right)
 }
 
-//  subtract two equivilently sized matricies, element by element
+//  subtract two equivalently sized matrices, element by element
 func - (left: Matrix, right: Matrix) -> Matrix {
-    return left + (-1.0 * right)
+    return left.subtract(right)
+}
+
+//  element-wise multiplication
+infix operator ∆* { associativity left precedence 150 }
+func ∆* (left: Matrix, right: Matrix) -> Matrix {
+    return left.multiplyElements(right)
+}
+
+//  element-wise division
+infix operator ∆/ { associativity left precedence 150 }
+func ∆/ (left: Matrix, right: Matrix) -> Matrix {
+    return left.divideElements(right)
+}
+
+//  multiply two matrices
+func * (left: Matrix, right: Matrix) -> Matrix {
+    return left.multiply(right)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,34 +431,22 @@ func - (left: Matrix, right: Matrix) -> Matrix {
 
 //  scalar addition
 func + (m: Matrix, s: Double) -> Matrix {
-    let result = Matrix.zeros(m.nr, m.nc)
-    for row in m.allRows {
-        for col in m.allCols {
-            result[row, col] = s + m[row, col]
-        }
-    }
-    return result
+    return m.add(s)
 }
 
 //  scalar subtraction (A - s = B)
 func - (m: Matrix, s: Double) -> Matrix {
-    return m + (-1.0 * s)
+    return m.subtract(s)
 }
 
 //  scalar multiplication (A * s = B)
 func * (m: Matrix, s: Double) -> Matrix {
-    let result = Matrix.zeros(m.nr, m.nc)
-    for row in m.allRows {
-        for col in m.allCols {
-            result[row, col] = m[row, col] * s
-        }
-    }
-    return result
+    return m.multiply(s)
 }
 
 //  scalar division (A / s = B)
 func / (m: Matrix, s: Double) -> Matrix {
-    return m * (1.0 / s)
+    return m.divide(s)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -346,7 +458,7 @@ func + (s: Double, m: Matrix) -> Matrix {
 }
 
 func - (s: Double, m: Matrix) -> Matrix {
-    return s + (-1.0 * m)
+    return (m * -1.0).add(s)
 }
 
 func * (s: Double, m: Matrix) -> Matrix {
@@ -354,13 +466,5 @@ func * (s: Double, m: Matrix) -> Matrix {
 }
 
 func / (s: Double, m: Matrix) -> Matrix {
-    //  couldn't figure out a way to implement this using some cobination of the other operators
-    //  I am possibly just not clever enough
-    let result = Matrix.zeros(m.nr, m.nc)
-    for row in m.allRows {
-        for col in m.allCols {
-            result[row, col] = s / m[row, col]
-        }
-    }
-    return result
+    return m.map{s / $0}
 }

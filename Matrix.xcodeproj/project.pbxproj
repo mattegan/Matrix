@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C98BC0341C2134C300EAE2F1 /* Readme.md in Sources */ = {isa = PBXBuildFile; fileRef = C98BC0331C2134C300EAE2F1 /* Readme.md */; };
 		C9D98C9A1C20BBEE00755766 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D98C991C20BBEE00755766 /* main.swift */; };
 		C9D98CA11C20BC3100755766 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D98CA01C20BC3100755766 /* Matrix.swift */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C98BC0331C2134C300EAE2F1 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		C9D98C961C20BBEE00755766 /* Matrix */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Matrix; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D98C991C20BBEE00755766 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C9D98CA01C20BC3100755766 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 			children = (
 				C9D98CA01C20BC3100755766 /* Matrix.swift */,
 				C9D98C991C20BBEE00755766 /* main.swift */,
+				C98BC0331C2134C300EAE2F1 /* Readme.md */,
 			);
 			path = Matrix;
 			sourceTree = "<group>";
@@ -124,6 +127,7 @@
 			files = (
 				C9D98CA11C20BC3100755766 /* Matrix.swift in Sources */,
 				C9D98C9A1C20BBEE00755766 /* main.swift in Sources */,
+				C98BC0341C2134C300EAE2F1 /* Readme.md in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
