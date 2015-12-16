@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C98BC0341C2134C300EAE2F1 /* Readme.md in Sources */ = {isa = PBXBuildFile; fileRef = C98BC0331C2134C300EAE2F1 /* Readme.md */; };
-		C9D98C9A1C20BBEE00755766 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D98C991C20BBEE00755766 /* main.swift */; };
-		C9D98CA11C20BC3100755766 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D98CA01C20BC3100755766 /* Matrix.swift */; };
+		C90C34411C213B7300395700 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90C343F1C213B7300395700 /* main.swift */; };
+		C90C34421C213B7300395700 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90C34401C213B7300395700 /* Matrix.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,10 +24,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C98BC0331C2134C300EAE2F1 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
+		C90C343F1C213B7300395700 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = src/main.swift; sourceTree = SOURCE_ROOT; };
+		C90C34401C213B7300395700 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Matrix.swift; path = src/Matrix.swift; sourceTree = SOURCE_ROOT; };
+		C98BC0331C2134C300EAE2F1 /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		C9D98C961C20BBEE00755766 /* Matrix */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Matrix; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9D98C991C20BBEE00755766 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		C9D98CA01C20BC3100755766 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,9 +60,9 @@
 		C9D98C981C20BBEE00755766 /* Matrix */ = {
 			isa = PBXGroup;
 			children = (
-				C9D98CA01C20BC3100755766 /* Matrix.swift */,
-				C9D98C991C20BBEE00755766 /* main.swift */,
-				C98BC0331C2134C300EAE2F1 /* Readme.md */,
+				C90C343F1C213B7300395700 /* main.swift */,
+				C90C34401C213B7300395700 /* Matrix.swift */,
+				C98BC0331C2134C300EAE2F1 /* readme.md */,
 			);
 			path = Matrix;
 			sourceTree = "<group>";
@@ -125,9 +124,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9D98CA11C20BC3100755766 /* Matrix.swift in Sources */,
-				C9D98C9A1C20BBEE00755766 /* main.swift in Sources */,
-				C98BC0341C2134C300EAE2F1 /* Readme.md in Sources */,
+				C90C34421C213B7300395700 /* Matrix.swift in Sources */,
+				C90C34411C213B7300395700 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,13 +215,18 @@
 		C9D98C9E1C20BBEE00755766 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		C9D98C9F1C20BBEE00755766 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
